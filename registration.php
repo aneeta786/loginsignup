@@ -21,7 +21,7 @@
 
 <div class="container">
 <div class="row">
-<div class="col-md-6">
+<div class="col-md-6 main_frm">
 <button type="button" id="formButton">Signup</button>
 <div class="main" id="form1">
 <form  class="form" method="post" action="#">
@@ -39,7 +39,7 @@
 </div>
 </div>
 <!-------------login form code start--------------------------->
-<div class="col-md-6">
+<div class="col-md-6 main_frm">
 <?php
 
 $connection = new mysqli("localhost", "root", "", "college");
@@ -71,7 +71,7 @@ $connection = new mysqli("localhost", "root", "", "college");
     $_SESSION['name'] = $session['name'];
 	//print_r($loginresult);
     $_SESSION['data'] = $session;
-   echo "login sucessfully	";
+  header('location:admin.php');
   } else{
     
   }
@@ -103,6 +103,7 @@ $(document).ready(function() {
 $("#register").click(function() {
 	alert("hello");
 var name = $("#name").val();
+console.log(name);
 var email = $("#email").val();
 var password = $("#password").val();
 var cpassword = $("#cpassword").val();

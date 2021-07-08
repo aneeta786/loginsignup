@@ -1,6 +1,6 @@
 <?php
 $connection = new mysqli("localhost", "root", "", "college");
-$name=$_POST['name1']; // Fetching Values from URL.
+$name=$_POST['name1'];// Fetching Values from URL.
 $email=$_POST['email1'];
 $password= $_POST['password1']; // Password Encryption, If you like you can also leave sha1.
 // Check if e-mail address syntax is valid or not
