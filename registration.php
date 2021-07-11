@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<?php 
+session_start();
+if(empty($_SESSION['name'])){
+  header('Location:registration.php');
+
+}
+?>
 <html>
 <head>
 <style></style>
@@ -24,7 +31,7 @@
 <div class="col-md-6 main_frm">
 <button type="button" id="formButton">Signup</button>
 <div class="main" id="form1">
-<form  class="form" method="post" action="#">
+<form  class="form" enctype="multipart/form-data" method="post" action="#">
 
 <label>Name :</label>
 <input type="text" name="name" id="name">
@@ -34,7 +41,9 @@
 <input type="password" name="password" id="password">
 <label>Confirm Password :</label>
 <input type="password" name="cpassword" id="cpassword">
-<input type="button" name="register" id="register" value="Register">
+  <input type="file" name="image" id="fileToUpload">
+
+<input type="submit" name="register" id="register" value="Register">
 </form>
 </div>
 </div>
@@ -69,7 +78,7 @@ $connection = new mysqli("localhost", "root", "", "college");
      $session = mysqli_fetch_assoc($loginresult); 
      session_start();
     $_SESSION['name'] = $session['name'];
-	//print_r($loginresult);
+  //print_r($loginresult);
     $_SESSION['data'] = $session;
   header('location:admin.php');
   } else{
@@ -98,43 +107,56 @@ $connection = new mysqli("localhost", "root", "", "college");
 <html> 
 </div>
 </div>
+<?php
+$connection = new mysqli("localhost", "root", "", "college");
+ if(isset($_POST['register'])){
+$name=$_POST['name'];// Fetching Values from URL.
+$email=$_POST['email'];
+$password= $_POST['password']; // Password Encryption, If you like you can also leave sha1.
+//$image1= $_POST['image1'];
+    // Get image name
+    $image = $_FILES['image']['name'];
+    // Get text
+    //$image_text = mysqli_real_escape_string($db, $_POST['image_text']);
+
+    // image file directory
+    $target = "images/".basename($image);
+  if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+        $msg = "Image uploaded successfully";
+    }else{
+        $msg = "Failed to upload image";
+    }
+// Check if e-mail address syntax is valid or not
+$email = filter_var($email, FILTER_SANITIZE_EMAIL); // Sanitizing email(Remove unexpected symbol like <,>,?,#,!, etc.)
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+echo "Invalid Email.......";
+}else{
+$result = mysqli_query($connection,"SELECT * FROM registration WHERE email='$email'");
+
+$data = mysqli_num_rows($result);
+if(($data)==0){
+$query = mysqli_query($connection,"insert into registration(name, email, password,image) values ('$name', '$email', '$password', '$image')"); // Insert query
+if($query){
+echo "You have Successfully Registered.....";
+}else
+{
+echo "Error....!!";
+}
+}else{
+echo "This email is already registered, Please try another email...";
+}
+}
+mysqli_close ($connection);
+ }
+?>
 <script>
-$(document).ready(function() {
-$("#register").click(function() {
-	alert("hello");
-var name = $("#name").val();
-console.log(name);
-var email = $("#email").val();
-var password = $("#password").val();
-var cpassword = $("#cpassword").val();
-if (name == '' || email == '' || password == '' || cpassword == '') {
-alert("Please fill all fields...!!!!!!");
-} else if ((password.length) < 8) {
-alert("Password should atleast 8 character in length...!!!!!!");
-} else if (!(password).match(cpassword)) {
-alert("Your passwords don't match. Try again?");
-} else {
-$.post("register.php", {
-name1: name,
-email1: email,
-password1: password
-}, function(data) {
-if (data == 'You have Successfully Registered.....') {
-$("form")[0].reset();
-}
-console.log(data);
-});
-}
-});
-});
 $("#formButton").click(function(){
         $("#form1").toggle();
     });
-	
-	$("#login_btn").click(function(){
+  
+  $("#login_btn").click(function(){
         $("#login_frm").toggle();
     });
-	
 </script>
 </body>
 </html>
